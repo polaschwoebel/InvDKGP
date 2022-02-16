@@ -22,4 +22,4 @@ To learn invariances with a deep kernel GP on rotated MNIST (i.e. Sec. 6.1 in th
  -full_batch_frequency 5000 -CNN_architecture small -fix_likelihood -fix_kernel_variance`
 
 
-For more runs from the paper see batch scripts in `deepkerneinv_experiments.experiment_scripts.bash_scripts/`.
+For more runs from the paper see batch scripts in `deepkernelinv_experiments.experiment_scripts.bash_scripts/`.
