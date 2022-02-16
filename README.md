@@ -1,5 +1,5 @@
-# Invariance learning for Deep Kernel GPs
-This repository contains source code for the experiments in 
+# Invariance Learning for Deep Kernel GPs
+This repository contains source code for the paper  
 [Last Layer Marginal Likelihood for Invariance Learning](
 https://arxiv.org/pdf/2106.07512.pdf) by
 Pola Schwöbel, Martin Jørgensen, Sebastian W. Ober and Mark van der Wilk.
