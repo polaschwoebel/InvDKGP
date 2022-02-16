@@ -1,0 +1,14 @@
+__pycache__
+data/
+model_checkpoints/
+notebooks/
+experiments/
+.DS_Store
+*.pyc
+build/
+deepkernelinv.egg-info/
+dist/
+deepkernelinv_experiments/bash_scripts/
+models
+deepkernelinv_experiments/experiment_results/*
+.nfs*
