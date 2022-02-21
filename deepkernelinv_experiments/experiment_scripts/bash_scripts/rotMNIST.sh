@@ -10,12 +10,12 @@ python runner_script.py -use_model SVGP -path 'experiment_results/rotMNIST_exper
 
 # M3: 
 python runner_script.py -use_model SampleSVGP -matheron -path 'experiment_results/rotMNIST_experiment/' -dataset 'rotMNIST' -batch_size 200 -nr_inducing_points 1200 \
--ind_point_init 'inducing-init' -nr_epochs 10000 -GPU 6 -likelihood_variance 0.02 -basekern_lengthscale 10 \
+-ind_point_init 'inducing-init' -nr_epochs 10000 -GPU 2 -likelihood_variance 0.02 -basekern_lengthscale 10 \
 -full_batch_frequency 5000 -learning_rate 0.001 -likelihood Softmax
 
 #M4: 
 python runner_script.py -use_model SVGP -path 'experiment_results/rotMNIST_experiment/' -dataset 'rotMNIST' -batch_size 200 -nr_inducing_points 1200 \
--ind_point_init 'inducing-init' -nr_epochs 10000 -GPU 1 -invariant -use_orbit seven_param_affine  -use_stn -orbit_size 120 -likelihood_variance 0.02 -basekern_lengthscale 10 \
+-ind_point_init 'inducing-init' -nr_epochs 10000 -GPU 2 -invariant -use_orbit seven_param_affine  -use_stn -orbit_size 120 -likelihood_variance 0.02 -basekern_lengthscale 10 \
 -full_batch_frequency 5000 -learning_rate 0.001 
 
 # M5: 

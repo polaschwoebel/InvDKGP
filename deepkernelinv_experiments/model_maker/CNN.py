@@ -4,7 +4,6 @@ from gpflow.config import default_float
 import gpflow
 from .DA_layers import DALayer, AggregatePredictionsLayer
 from deepkernelinv_experiments.utils.helpers import name_mapper
-from .LieConv import MolecLieResNet
 
 def initialize_cnn(args):
     image_shape = args.image_shape
@@ -115,15 +114,6 @@ def initialize_cnn(args):
             tf.keras.layers.Lambda(lambda x: tf.cast(x,  default_float()))])
         print(vgg.summary())
         return vgg
-
-    if args.CNN_architecture == 'lie_conv':
-        num_species = 6 #5 5 in original code but shouldnt it be 6? 
-        charge_scale = 9 # not in use currently 
-        input_shape = (29, 6)
-        lie_conv_model = MolecLieResNet(charge_scale=charge_scale, bn=False, batch_size=args.batch_size) # TODO: implement bn
-        # lie_conv_model.build(input_shape=input_shape)
-        print(lie_conv_model.summary())
-        return lie_conv_model
 
 
 # similar to the "regular" CNN but without the last fully connected layer
@@ -250,28 +240,6 @@ def load_pretrained_cnn(args):
     return deep_kernel_CNN
 
 
-def load_pretrained_encoder(args):
-    print('Loading pretrained autoencoder')
-    #autoencoder = tf.keras.load_model(args.pretrained_CNN_path)
-    from experiment_scripts.AE import create_model as initialize_ae
-    ae = initialize_ae(args)
-    print('ae initialized')
-    deep_kernel_CNN = initialize_deep_kernel_cnn(args)
-    ckpt = tf.train.Checkpoint(model=ae)
-    latest_checkpoint = tf.train.latest_checkpoint(args.pretrained_CNN_path)
-    ckpt.restore(latest_checkpoint).expect_partial()
-    if latest_checkpoint is None:
-        print('NO CHECKPOINT TO LOAD FROM - CHECK PATH!')
-        exit()
-    print('LOADING CNN WEIGHTS FROM', latest_checkpoint)
-    pretrained_CNN_param_dict = gpflow.utilities.parameter_dict(ae)
-    pretrained_CNN_param_dict = {key[11:]: value for (key, value) in pretrained_CNN_param_dict.items() if key.startswith('._layers[1]')}
-    target_params = gpflow.utilities.parameter_dict(deep_kernel_CNN).keys()
-    params_to_load = {key: value for (key, value) in pretrained_CNN_param_dict.items() if key in target_params}
-    gpflow.utilities.multiple_assign(deep_kernel_CNN, params_to_load)
-    return deep_kernel_CNN
-
-
 def load_pretrained_CNN_MLE_DA(args):
     # CNN_model.compile(loss='categorical_crossentropy', metrics=['accuracy'])
     import copy 
@@ -302,13 +270,6 @@ def load_pretrained_CNN_MLE_DA(args):
     # exit()
     return new_CNN
 
-
-def qm9_loss(y_actual, y_predicted):
-    print('y_predicted', y_predicted)
-    print('y_actual', y_actual)
-    return (y_predicted-y_actual).abs().mean()
-
-
 def create_model(args, X=None):
     CNN_model = initialize_cnn(args)
 
@@ -316,8 +277,8 @@ def create_model(args, X=None):
         CNN_model = load_pretrained_CNN_MLE_DA(args)
 
     optimizer = create_optimizer(args)
-    loss = [qm9_loss] if args.dataset == 'QM9' else ['categorical_crossentropy']
-    metrics = [qm9_loss] if args.dataset == 'QM9' else ['accuracy']
+    loss = ['categorical_crossentropy']
+    metrics = ['accuracy']
     CNN_model.compile(
         loss=loss, optimizer=optimizer, metrics=metrics)
     return CNN_model
